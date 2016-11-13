@@ -92,7 +92,7 @@ public class Square {
                 GLES20.GL_FLOAT, false, vertexStride, vertexBuffer);
         mColorHandle = GLES20.glGetUniformLocation(mProgram, "vColor");
         GLES20.glUniform4fv(mColorHandle, 1, color, 0);
-        GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, vertexCount);
+        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_FAN, 0, vertexCount);
         GLES20.glDisableVertexAttribArray(mPositionHandle);
     }
 }
