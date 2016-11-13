@@ -1,8 +1,19 @@
 package britnesissom.extremepool;
 
-/**
- * Created by mlh-user on 11/12/16.
- */
+import android.content.Context;
+import android.opengl.GLSurfaceView;
 
-public class MyGLSurfaceView {
+class MyGLSurfaceView extends GLSurfaceView {
+
+    private final MyGLRenderer mRenderer;
+
+    public MyGLSurfaceView(Context context) {
+        super(context);
+
+        setEGLContextClientVersion(2);
+
+        mRenderer = new MyGLRenderer();
+
+        setRenderer(mRenderer);
+    }
 }
