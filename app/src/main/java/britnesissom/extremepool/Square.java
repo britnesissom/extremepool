@@ -18,22 +18,23 @@ public class Square {
     //Coordinate Members
     static final int COORDS_PER_VERTEX = 3;
     static float squareCoords[] = {
-            -0.5f,  0.5f, 0.0f,   // top left
-            -0.5f, -0.5f, 0.0f,   // bottom left
-            0.5f, -0.5f, 0.0f,   // bottom right
-            0.5f,  0.5f, 0.0f }; // top right
+            -0.2f,  0.2f, 0.0f,   // top left
+            -0.2f, -0.2f, 0.0f,   // bottom left
+            0.2f, -0.2f, 0.0f,   // bottom right
+            0.2f,  0.2f, 0.0f }; // top right
     private final int vertexCount = squareCoords.length / COORDS_PER_VERTEX;
     private final int vertexStride = COORDS_PER_VERTEX * 4;
 
 
-    private short drawOrder[] = { 0, 1, 2, 0, 2, 3 }; // order to draw vertices
+    private short drawOrder[] = { 0, 1, 2, 3 }; // order to draw vertices
 
     //Shader members
     private final int mProgram;
     private final String vertexShaderCode =
+            "uniform mat4 uMVPMatrix;" +
             "attribute vec4 vPosition;" +
             "void main() {" +
-            "  gl_Position = vPosition;" +
+            "  gl_Position = uMVPMatrix * vPosition;" +
             "}";
     private final String fragmentShaderCode =
             "precision mediump float;" +
@@ -43,6 +44,7 @@ public class Square {
             "}";
 
     //Draw members
+    private int mMVPMatrixHandle;
     private int mPositionHandle;
     private int mColorHandle;
     private float color[] = {0.5f, 0.75f, 0.8f, 1.0f};
@@ -82,17 +84,24 @@ public class Square {
         GLES20.glLinkProgram(mProgram);
     }
 
-    public void draw() {
+    public void draw(float[] mvpMatrix) {
 
         //set program as active program
         GLES20.glUseProgram(mProgram);
+
         mPositionHandle = GLES20.glGetAttribLocation(mProgram, "vPosition");
         GLES20.glEnableVertexAttribArray(mPositionHandle);
         GLES20.glVertexAttribPointer(mPositionHandle, COORDS_PER_VERTEX,
                 GLES20.GL_FLOAT, false, vertexStride, vertexBuffer);
+
         mColorHandle = GLES20.glGetUniformLocation(mProgram, "vColor");
         GLES20.glUniform4fv(mColorHandle, 1, color, 0);
+
+        mMVPMatrixHandle = GLES20.glGetUniformLocation(mProgram, "uMVPMatrix");
+        GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mvpMatrix, 0);
+
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_FAN, 0, vertexCount);
+
         GLES20.glDisableVertexAttribArray(mPositionHandle);
     }
 }
